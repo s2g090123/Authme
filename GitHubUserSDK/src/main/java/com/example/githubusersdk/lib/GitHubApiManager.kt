@@ -62,7 +62,7 @@ class GitHubApiManager {
             val prevPage = response.retrieveSearchPreviousPage()
             val data = response.body()
                 ?.toUsers()
-                ?.filter { it.login == name }
+                ?.filter { it.login.contains(name) }
                 ?: emptyList()
             GitHubResponse.Success(
                 Users(
