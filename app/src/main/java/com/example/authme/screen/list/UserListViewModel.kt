@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.example.authme.API_KEY
 import com.example.authme.screen.list.event.ListEvent
 import com.example.authme.usecase.UserUseCase
 import com.example.githubusersdk.models.User
@@ -27,7 +28,7 @@ class UserListViewModel(
         .debounce(300)
         .distinctUntilChanged()
         .flatMapLatest {
-            useCase.getUserStream("", it)
+            useCase.getUserStream(API_KEY, it)
         }
         .cachedIn(viewModelScope)
 
