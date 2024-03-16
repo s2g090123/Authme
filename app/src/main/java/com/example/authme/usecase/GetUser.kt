@@ -10,7 +10,7 @@ class GetUser(
     suspend operator fun invoke(
         token: String,
         page: Int,
-        perPage: Int,
+        perPage: Int = 30,
         userName: String = "",
     ): GitHubResponse<Users> {
         return if (userName.isBlank()) {

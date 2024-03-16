@@ -78,4 +78,8 @@ dependencies {
     // coil
     implementation("io.coil-kt:coil-compose:${rootProject.extra["coil_version"]}")
     implementation("io.coil-kt:coil-svg:${rootProject.extra["coil_version"]}")
+
+    // paging
+    implementation("androidx.paging:paging-runtime:${rootProject.extra["paging_version"]}")
+    implementation("androidx.paging:paging-compose:3.3.0-alpha04")
 }
