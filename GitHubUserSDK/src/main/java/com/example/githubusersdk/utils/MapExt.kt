@@ -24,6 +24,7 @@ fun UserSearchResponse.toUsers(): List<User> {
 fun UserInfoResponse.toUserInfo(): UserInfo? {
     login ?: return null
     return UserInfo(
+        avatarUrl = avatarUrl ?: "",
         name = name ?: "",
         bio = bio ?: "",
         login = login,

@@ -1,6 +1,7 @@
 package com.example.githubusersdk.models
 
 data class UserInfo(
+    val avatarUrl: String,
     val name: String,
     val bio: String,
     val login: String,
