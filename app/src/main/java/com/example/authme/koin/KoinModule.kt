@@ -2,6 +2,7 @@ package com.example.authme.koin
 
 import com.example.authme.repository.DefaultUserRepository
 import com.example.authme.repository.UserRepository
+import com.example.authme.screen.info.UserInfoViewModel
 import com.example.authme.screen.list.UserListViewModel
 import com.example.authme.usecase.GetUser
 import com.example.authme.usecase.GetUserInfo
@@ -22,4 +23,5 @@ val module = module {
     factory { GetUserStream(get()) }
 
     viewModel { UserListViewModel(get()) }
+    viewModel { UserInfoViewModel(get(), get()) }
 }

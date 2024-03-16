@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.authme.navigation.Route
+import com.example.authme.screen.info.UserInfoScreen
 import com.example.authme.screen.list.UserListScreen
 
 @Composable
@@ -24,7 +25,11 @@ fun MainScreen(
             )
         }
         composable(Route.Info.route) {
-            // TODO
+            UserInfoScreen(
+                onBack = {
+                    navHostController.popBackStack()
+                }
+            )
         }
     }
 }

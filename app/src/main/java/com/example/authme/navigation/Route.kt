@@ -9,5 +9,5 @@ sealed class Route(val path: String, val params: String = "") {
         fun build(login: String): String = "$path/$login"
     }
 
-    val route: String = if (params.isEmpty()) path else "$path/$params"
+    val route: String = if (params.isEmpty()) path else "$path/{$params}"
 }

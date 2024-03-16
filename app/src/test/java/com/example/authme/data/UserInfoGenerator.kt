@@ -6,6 +6,7 @@ object UserInfoGenerator {
     fun create(): List<UserInfo> {
         return listOf(
             UserInfo(
+                avatarUrl = "",
                 name = "1",
                 bio = "",
                 login = "1",
@@ -14,6 +15,7 @@ object UserInfoGenerator {
                 blog = "",
             ),
             UserInfo(
+                avatarUrl = "",
                 name = "2",
                 bio = "",
                 login = "2",
@@ -22,6 +24,7 @@ object UserInfoGenerator {
                 blog = "",
             ),
             UserInfo(
+                avatarUrl = "",
                 name = "3",
                 bio = "",
                 login = "3",
