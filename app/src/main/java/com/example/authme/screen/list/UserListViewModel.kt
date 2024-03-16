@@ -27,7 +27,7 @@ class UserListViewModel(
         .debounce(300)
         .distinctUntilChanged()
         .flatMapLatest {
-            useCase.getUserStream("", "")
+            useCase.getUserStream("", it)
         }
         .cachedIn(viewModelScope)
 
