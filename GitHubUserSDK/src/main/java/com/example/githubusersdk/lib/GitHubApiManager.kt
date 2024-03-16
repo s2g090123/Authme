@@ -31,7 +31,7 @@ class GitHubApiManager {
             GitHubResponse.Success(
                 Users(
                     data = data ?: emptyList(),
-                    prevPage = if (since == 0) null else minOf(0, since - perPage),
+                    prevPage = null,
                     nextPage = nextSince,
                     perPage = perPage,
                 )
