@@ -47,6 +47,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -80,6 +83,11 @@ dependencies {
     implementation("io.coil-kt:coil-svg:${rootProject.extra["coil_version"]}")
 
     // paging
-    implementation("androidx.paging:paging-runtime:${rootProject.extra["paging_version"]}")
+    implementation("androidx.paging:paging-runtime-ktx:${rootProject.extra["paging_version"]}")
     implementation("androidx.paging:paging-compose:3.3.0-alpha04")
+
+    // testing
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${rootProject.extra["coroutine_version"]}")
+    testImplementation("io.insert-koin:koin-test-junit4:${rootProject.extra["koin_version"]}")
+    testImplementation("androidx.paging:paging-testing:${rootProject.extra["paging_version"]}")
 }
