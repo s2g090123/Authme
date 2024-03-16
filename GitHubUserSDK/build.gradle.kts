@@ -1,6 +1,14 @@
+import java.util.Properties
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+}
+
+val secretPropsFile = File("secret.properties")
+val secretProps = Properties()
+if (secretPropsFile.exists()) {
+    secretProps.load(secretPropsFile.inputStream())
 }
 
 android {
@@ -12,6 +20,11 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        buildConfigField("String", "API_KEY", "\"${secretProps["API_KEY"]}\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {

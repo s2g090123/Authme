@@ -1,5 +1,6 @@
 package com.example.githubusersdk.lib
 
+import com.example.githubusersdk.BuildConfig
 import com.example.githubusersdk.common.GitHubResponse
 import com.example.githubusersdk.models.UserInfoResponse
 import com.example.githubusersdk.models.Users
@@ -12,8 +13,7 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class GitHubApiManagerTest {
-    private val apiKey =
-        "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"
+    private val apiKey = BuildConfig.API_KEY
 
     private lateinit var manager: GitHubApiManager
 
