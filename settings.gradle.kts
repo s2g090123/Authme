@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Authme"
 include(":app")
- 
+include(":GitHubUserSDK")
