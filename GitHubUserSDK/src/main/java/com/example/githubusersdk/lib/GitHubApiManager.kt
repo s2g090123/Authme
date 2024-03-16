@@ -3,6 +3,9 @@ package com.example.githubusersdk.lib
 import com.example.githubusersdk.common.GitHubResponse
 import com.example.githubusersdk.models.UserInfo
 import com.example.githubusersdk.models.Users
+import com.example.githubusersdk.utils.toUser
+import com.example.githubusersdk.utils.toUserInfo
+import com.example.githubusersdk.utils.toUsers
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
@@ -21,15 +24,51 @@ class GitHubApiManager {
             if (!response.isSuccessful) {
                 return GitHubResponse.Error(response.message())
             }
-            val nextSince = response.retrieveNextSince()
-            val data = response.body()?.filter {
-                it.login != null
+            val nextSince = response.retrieveUsersNextSince()
+            val data = response.body()?.mapNotNull {
+                it.toUser()
             }
             GitHubResponse.Success(
                 Users(
                     data = data ?: emptyList(),
-                    lastSince = since,
-                    nextSince = nextSince,
+                    prevPage = if (since == 0) null else minOf(0, since - perPage),
+                    nextPage = nextSince,
+                    perPage = perPage,
+                )
+            )
+        } catch (e: HttpException) {
+            GitHubResponse.Error(e.localizedMessage ?: "A HttpException occurred")
+        } catch (e: IOException) {
+            GitHubResponse.Error("Couldn't reach server. Check your internet connect")
+        } catch (e: Exception) {
+            println(e)
+            GitHubResponse.Error("Unknown error occurred")
+        }
+    }
+
+    suspend fun getUsersByName(
+        authorization: String,
+        name: String,
+        page: Int = 1,
+        perPage: Int = 30
+    ): GitHubResponse<Users> {
+        return try {
+            val token = reformatAuthorization(authorization)
+            val response = api.getUsersByName(token, name, page, perPage)
+            if (!response.isSuccessful) {
+                return GitHubResponse.Error(response.message())
+            }
+            val nextPage = response.retrieveSearchNextPage()
+            val prevPage = response.retrieveSearchPreviousPage()
+            val data = response.body()
+                ?.toUsers()
+                ?.filter { it.login == name }
+                ?: emptyList()
+            GitHubResponse.Success(
+                Users(
+                    data = data,
+                    prevPage = prevPage,
+                    nextPage = nextPage,
                     perPage = perPage,
                 )
             )
@@ -53,9 +92,11 @@ class GitHubApiManager {
             if (!response.isSuccessful) {
                 return GitHubResponse.Error(response.message())
             }
-            response.body()?.let {
-                GitHubResponse.Success(it)
-            } ?: GitHubResponse.Error("User is not found")
+            response.body()
+                ?.toUserInfo()
+                ?.let {
+                    GitHubResponse.Success(it)
+                } ?: GitHubResponse.Error("User is not found")
         } catch (e: HttpException) {
             GitHubResponse.Error(e.localizedMessage ?: "A HttpException occurred")
         } catch (e: IOException) {
@@ -70,12 +111,38 @@ class GitHubApiManager {
         return "Bearer $authorization"
     }
 
-    private fun Response<*>.retrieveNextSince(): Int? {
+    private fun Response<*>.retrieveUsersNextSince(): Int? {
         val linkHeader = headers().get("Link") ?: return null
         val hasNextPage = linkHeader.contains("rel=\"next\"")
         return if (hasNextPage) {
             val pattern =
-                "<https://api\\.github\\.com/users\\?since=(\\d+)&per_page=\\d+>; rel=\"next\"".toRegex()
+                """.*since=(\d+)&.*>; rel="next"""".toRegex()
+            val matchResult = pattern.find(linkHeader)
+            return matchResult?.groupValues?.get(1)?.toIntOrNull()
+        } else {
+            null
+        }
+    }
+
+    private fun Response<*>.retrieveSearchNextPage(): Int? {
+        val linkHeader = headers().get("Link") ?: return null
+        val hasNextPage = linkHeader.contains("rel=\"next\"")
+        return if (hasNextPage) {
+            val pattern =
+                """.*page=(\d+)&.*>; rel="next"""".toRegex()
+            val matchResult = pattern.find(linkHeader)
+            return matchResult?.groupValues?.get(1)?.toIntOrNull()
+        } else {
+            null
+        }
+    }
+
+    private fun Response<*>.retrieveSearchPreviousPage(): Int? {
+        val linkHeader = headers().get("Link") ?: return null
+        val hasNextPage = linkHeader.contains("rel=\"next\"")
+        return if (hasNextPage) {
+            val pattern =
+                """.*page=(\d+)&.*>; rel="prev"""".toRegex()
             val matchResult = pattern.find(linkHeader)
             return matchResult?.groupValues?.get(1)?.toIntOrNull()
         } else {

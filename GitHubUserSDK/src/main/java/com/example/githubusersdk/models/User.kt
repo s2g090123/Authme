@@ -1,13 +1,7 @@
 package com.example.githubusersdk.models
 
-
-import com.google.gson.annotations.SerializedName
-
 data class User(
-    @SerializedName("avatar_url")
-    val avatarUrl: String?,
-    @SerializedName("login")
-    val login: String?,
-    @SerializedName("site_admin")
-    val siteAdmin: Boolean?
+    val avatarUrl: String,
+    val login: String,
+    val siteAdmin: Boolean,
 )

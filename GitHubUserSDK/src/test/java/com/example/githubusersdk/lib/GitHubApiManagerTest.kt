@@ -1,7 +1,7 @@
 package com.example.githubusersdk.lib
 
 import com.example.githubusersdk.common.GitHubResponse
-import com.example.githubusersdk.models.UserInfo
+import com.example.githubusersdk.models.UserInfoResponse
 import com.example.githubusersdk.models.Users
 import com.example.githubusersdk.utils.assertIsA
 import com.example.githubusersdk.utils.assertIsTrue
@@ -74,10 +74,34 @@ class GitHubApiManagerTest {
     }
 
     @Test
+    fun `getUsersByName with my account`() = runTest {
+        val response = manager.getUsersByName(apiKey, "s2g090123")
+
+        assertIsA<GitHubResponse.Success<Users>>(response)
+        val firstUser = response.data?.data?.firstOrNull()
+        firstUser.assertIsTrue { it?.login == "s2g090123" }
+    }
+
+    @Test
+    fun `getUsersByName with error name`() = runTest {
+        val response = manager.getUsersByName(apiKey, "")
+
+        assertIsA<GitHubResponse.Error<Users>>(response)
+    }
+
+    @Test
+    fun `getUsersByName with not found`() = runTest {
+        val response = manager.getUsersByName(apiKey, "jfgdkluqio")
+
+        assertIsA<GitHubResponse.Success<Users>>(response)
+        response.data?.data.assertIsTrue { it?.isEmpty() == true }
+    }
+
+    @Test
     fun `getUserInfo with my account`() = runTest {
         val response = manager.getUserInfo(apiKey, userName = "s2g090123")
 
-        assertIsA<GitHubResponse.Success<UserInfo>>(response)
+        assertIsA<GitHubResponse.Success<UserInfoResponse>>(response)
         response.data
             ?.assertIsTrue { it.login == "s2g090123" }
             ?.assertIsTrue { it.name == "JiaChian" }
@@ -87,7 +111,7 @@ class GitHubApiManagerTest {
     fun `getUserInfo with my account and token contains Bearer`() = runTest {
         val response = manager.getUserInfo("Bearer $apiKey", userName = "s2g090123")
 
-        assertIsA<GitHubResponse.Success<UserInfo>>(response)
+        assertIsA<GitHubResponse.Success<UserInfoResponse>>(response)
         response.data
             ?.assertIsTrue { it.login == "s2g090123" }
             ?.assertIsTrue { it.name == "JiaChian" }
@@ -97,13 +121,13 @@ class GitHubApiManagerTest {
     fun `getUserInfo with error api key`() = runTest {
         val response = manager.getUserInfo("", userName = "s2g090123")
 
-        assertIsA<GitHubResponse.Error<UserInfo>>(response)
+        assertIsA<GitHubResponse.Error<UserInfoResponse>>(response)
     }
 
     @Test
     fun `getUserInfo with error user name`() = runTest {
         val response = manager.getUserInfo(apiKey, userName = "")
 
-        assertIsA<GitHubResponse.Error<UserInfo>>(response)
+        assertIsA<GitHubResponse.Error<UserInfoResponse>>(response)
     }
 }
