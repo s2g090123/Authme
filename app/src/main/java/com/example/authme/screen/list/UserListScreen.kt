@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +37,7 @@ fun UserListScreen(
     onClick: (User) -> Unit,
 ) {
     val search by viewModel.search.collectAsState()
+    val loading by viewModel.loading
     val items = viewModel.users.collectAsLazyPagingItems()
     Column {
         OutlinedTextField(
@@ -48,13 +50,21 @@ fun UserListScreen(
                 viewModel.onEvent(ListEvent.Search(it))
             }
         )
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            items(items.itemCount) { index ->
-                items[index]?.let {
-                    UserListItem(
-                        user = it,
-                        onClick = onClick,
-                    )
+        if (loading) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 12.dp)
+            )
+        } else {
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                items(items.itemCount) { index ->
+                    items[index]?.let {
+                        UserListItem(
+                            user = it,
+                            onClick = onClick,
+                        )
+                    }
                 }
             }
         }
