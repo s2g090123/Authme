@@ -1,6 +1,7 @@
 package com.example.authme.koin
 
 import com.example.authme.repository.DefaultUserRepository
+import com.example.authme.repository.UserRepository
 import com.example.authme.screen.list.UserListViewModel
 import com.example.authme.usecase.GetUser
 import com.example.authme.usecase.GetUserInfo
@@ -12,7 +13,7 @@ import org.koin.dsl.module
 
 val module = module {
     single { GitHubApiManager() }
-    single { DefaultUserRepository(get()) }
+    single { DefaultUserRepository(get()) as UserRepository }
 
     // use case
     factory { UserUseCase(get(), get(), get()) }
