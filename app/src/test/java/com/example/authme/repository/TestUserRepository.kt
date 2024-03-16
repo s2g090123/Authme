@@ -1,6 +1,7 @@
 package com.example.authme.repository
 
 import com.example.authme.data.UserGenerator
+import com.example.authme.data.UserInfoGenerator
 import com.example.githubusersdk.common.GitHubResponse
 import com.example.githubusersdk.models.UserInfo
 import com.example.githubusersdk.models.Users
@@ -12,6 +13,8 @@ class TestUserRepository : UserRepository {
         nextPage = null,
         perPage = 0,
     )
+
+    private val userInfo = UserInfoGenerator.create()
 
     override suspend fun getUsers(token: String, since: Int, perPage: Int): GitHubResponse<Users> {
         return GitHubResponse.Success(users)
@@ -33,6 +36,9 @@ class TestUserRepository : UserRepository {
     }
 
     override suspend fun getUserInfo(token: String, userName: String): GitHubResponse<UserInfo> {
-        TODO("Not yet implemented")
+        return userInfo
+            .firstOrNull { it.login == userName }
+            ?.let { GitHubResponse.Success(it) }
+            ?: GitHubResponse.Error("Not Found")
     }
 }
