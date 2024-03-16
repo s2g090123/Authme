@@ -13,6 +13,7 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class GitHubApiManagerTest {
+    // TODO - Replace with your api key
     private val apiKey = BuildConfig.API_KEY
 
     private lateinit var manager: GitHubApiManager
