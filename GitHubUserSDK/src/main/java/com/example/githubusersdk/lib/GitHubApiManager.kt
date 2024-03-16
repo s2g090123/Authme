@@ -22,9 +22,12 @@ class GitHubApiManager {
                 return GitHubResponse.Error(response.message())
             }
             val nextSince = response.retrieveNextSince()
+            val data = response.body()?.filter {
+                it.login != null
+            }
             GitHubResponse.Success(
                 Users(
-                    data = response.body() ?: emptyList(),
+                    data = data ?: emptyList(),
                     lastSince = since,
                     nextSince = nextSince,
                     perPage = perPage,
