@@ -59,6 +59,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.navigation:navigation-compose")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -69,4 +70,12 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     implementation(project(":GitHubUserSDK"))
+
+    // koin
+    implementation("io.insert-koin:koin-android:${rootProject.extra["koin_version"]}")
+    implementation("io.insert-koin:koin-androidx-compose:${rootProject.extra["koin_version"]}")
+
+    // coil
+    implementation("io.coil-kt:coil-compose:${rootProject.extra["coil_version"]}")
+    implementation("io.coil-kt:coil-svg:${rootProject.extra["coil_version"]}")
 }
