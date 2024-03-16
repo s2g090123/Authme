@@ -22,12 +22,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.authme.screen.list.event.ListEvent
+import com.example.authme.testing.TestTag
 import com.example.githubusersdk.models.User
 import org.koin.androidx.compose.koinViewModel
 
@@ -42,6 +44,7 @@ fun UserListScreen(
     Column {
         OutlinedTextField(
             modifier = Modifier
+                .testTag(TestTag.UserListScreen_TextField)
                 .padding(12.dp)
                 .fillMaxWidth()
                 .height(48.dp),
@@ -78,6 +81,7 @@ private fun UserListItem(
 ) {
     Card(
         modifier = Modifier
+            .testTag(TestTag.UserListItem)
             .padding(horizontal = 12.dp, vertical = 4.dp)
             .fillMaxWidth()
             .clickable { onClick(user) }
@@ -98,10 +102,14 @@ private fun UserListItem(
             Column(
                 modifier = Modifier.padding(start = 12.dp)
             ) {
-                Text(text = user.login)
+                Text(
+                    modifier = Modifier.testTag(TestTag.UserListItem_Text_Login),
+                    text = user.login
+                )
                 if (user.siteAdmin) {
                     Text(
                         modifier = Modifier
+                            .testTag(TestTag.UserListItem_Text_Staff)
                             .clip(RoundedCornerShape(4.dp))
                             .background(Color.Blue)
                             .padding(4.dp),

@@ -33,12 +33,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.authme.testing.TestTag
 import com.example.githubusersdk.models.UserInfo
 import org.koin.androidx.compose.koinViewModel
 
@@ -50,7 +52,10 @@ fun UserInfoScreen(
     val state = viewModel.state.value
     Scaffold(
         topBar = {
-            IconButton(onClick = onBack) {
+            IconButton(
+                modifier = Modifier.testTag(TestTag.UserInfoScreen_Btn_Back),
+                onClick = onBack
+            ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
                     contentDescription = null,
@@ -69,7 +74,9 @@ fun UserInfoScreen(
                 }
                 state.error != null || state.data == null -> {
                     Text(
-                        modifier = Modifier.align(Alignment.Center),
+                        modifier = Modifier
+                            .testTag(TestTag.UserInfoScreen_Text_Error)
+                            .align(Alignment.Center),
                         text = "Not Found"
                     )
                 }
@@ -101,6 +108,7 @@ private fun InfoBody(
         )
         Text(
             modifier = Modifier
+                .testTag(TestTag.InfoBody_Text_Name)
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 8.dp),
             text = info.name,
@@ -109,6 +117,7 @@ private fun InfoBody(
         if (info.bio.isNotBlank()) {
             Text(
                 modifier = Modifier
+                    .testTag(TestTag.InfoBody_Text_Bio)
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 8.dp),
                 text = info.bio,
@@ -135,6 +144,7 @@ private fun InfoBody(
                 if (info.siteAdmin) {
                     Text(
                         modifier = Modifier
+                            .testTag(TestTag.InfoBody_Text_Login)
                             .clip(RoundedCornerShape(4.dp))
                             .background(Color.Blue)
                             .padding(4.dp),
@@ -155,7 +165,9 @@ private fun InfoBody(
                     contentDescription = null,
                 )
                 Text(
-                    modifier = Modifier.padding(start = 12.dp),
+                    modifier = Modifier
+                        .testTag(TestTag.InfoBody_Text_Location)
+                        .padding(start = 12.dp),
                     text = info.location
                 )
             }
@@ -170,7 +182,9 @@ private fun InfoBody(
                     contentDescription = null,
                 )
                 ClickableText(
-                    modifier = Modifier.padding(start = 12.dp),
+                    modifier = Modifier
+                        .testTag(TestTag.InfoBody_Text_Blog)
+                        .padding(start = 12.dp),
                     text = AnnotatedString(info.blog),
                     style = TextStyle(color = Color.Blue),
                     onClick = {
