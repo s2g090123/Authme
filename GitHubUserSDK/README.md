@@ -76,3 +76,28 @@ when (response) {
 In `GitHubApiManagerTest`, ensure that all APIs are functioning correctly.
 
 **Before running the tests, remember to replace `apiKey` with your own API key in `GitHubApiManagerTest`.**
+
+## Installation
+Include jitpack in your root settings.gradle file:
+```gradle
+pluginManagement {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+And add the dependency to your app level build.gradle file:
+```gradle
+dependencies {
+    implementation("com.github.s2g090123:Authme:v1.0.0")
+}
+```
