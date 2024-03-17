@@ -140,11 +140,14 @@ private fun InfoBody(
             Column(
                 modifier = Modifier.padding(start = 12.dp)
             ) {
-                Text(text = info.login)
+                Text(
+                    modifier = Modifier.testTag(TestTag.InfoBody_Text_Login),
+                    text = info.login
+                )
                 if (info.siteAdmin) {
                     Text(
                         modifier = Modifier
-                            .testTag(TestTag.InfoBody_Text_Login)
+                            .testTag(TestTag.InfoBody_Text_Staff)
                             .clip(RoundedCornerShape(4.dp))
                             .background(Color.Blue)
                             .padding(4.dp),
