@@ -3,6 +3,7 @@ import java.util.Properties
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("maven-publish")
 }
 
 val secretPropsFile = File("secret.properties")
@@ -37,11 +38,19 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
+    }
+    publishing {
+        publishing {
+            singleVariant("release") {
+                withSourcesJar()
+                withJavadocJar()
+            }
+        }
     }
 }
 
@@ -60,4 +69,18 @@ dependencies {
 
     // testing
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("release") {
+            groupId = "com.github.s2g090123"
+            artifactId = "GitHubUserSDK"
+            version = "v1.0.0"
+
+            afterEvaluate {
+                from(components["release"])
+            }
+        }
+    }
 }
