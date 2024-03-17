@@ -27,6 +27,7 @@ android {
             useSupportLibrary = true
         }
         buildConfigField("String", "API_KEY", "\"${secretProps["API_KEY"]}\"")
+        testInstrumentationRunner = "com.example.authme.AndroidTestRunner"
     }
 
     buildFeatures {
@@ -76,6 +77,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.navigation:navigation-compose")
+    androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
