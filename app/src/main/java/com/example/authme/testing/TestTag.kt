@@ -2,6 +2,7 @@ package com.example.authme.testing
 
 object TestTag {
     const val UserListScreen_TextField = "UserListScreen_TextField"
+    const val UserListScreen_Text_NotFound = "UserListScreen_Text_NotFound"
     const val UserListItem = "UserListItem"
     const val UserListItem_Text_Login = "UserListItem_Text_Login"
     const val UserListItem_Text_Staff = "UserListItem_Text_Staff"

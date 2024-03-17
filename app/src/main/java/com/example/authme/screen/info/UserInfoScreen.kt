@@ -77,7 +77,7 @@ fun UserInfoScreen(
                         modifier = Modifier
                             .testTag(TestTag.UserInfoScreen_Text_Error)
                             .align(Alignment.Center),
-                        text = "Not Found"
+                        text = state.error ?: "Not Found"
                     )
                 }
                 else -> {

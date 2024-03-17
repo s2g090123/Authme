@@ -17,7 +17,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +43,7 @@ fun UserListScreen(
     val search by viewModel.search.collectAsState()
     val loading by viewModel.loading
     val items = viewModel.users.collectAsLazyPagingItems()
+    val notFound by remember { derivedStateOf { items.itemCount == 0 } }
     Column {
         OutlinedTextField(
             modifier = Modifier
@@ -69,6 +72,15 @@ fun UserListScreen(
                         )
                     }
                 }
+            }
+            if (notFound) {
+                Text(
+                    modifier = Modifier
+                        .testTag(TestTag.UserListScreen_Text_NotFound)
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 12.dp),
+                    text = "Not Found"
+                )
             }
         }
     }
