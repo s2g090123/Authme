@@ -87,7 +87,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    implementation(project(":GitHubUserSDK"))
+    implementation("com.github.s2g090123:Authme:v1.0.0")
 
     // koin
     implementation("io.insert-koin:koin-android:${rootProject.extra["koin_version"]}")
