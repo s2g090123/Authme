@@ -25,9 +25,8 @@ class UserInfoViewModel(
         viewModelScope.launch {
             when (val response = useCase.getUserInfo(API_KEY, login)) {
                 is GitHubResponse.Error -> {
-                    stateImp.value = InfoState(error = response.message)
+                    stateImp.value = InfoState(error = response.error.message)
                 }
-
                 is GitHubResponse.Success -> {
                     stateImp.value = InfoState(data = response.data)
                 }

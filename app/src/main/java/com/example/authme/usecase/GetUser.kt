@@ -2,6 +2,7 @@ package com.example.authme.usecase
 
 import com.example.authme.repository.UserRepository
 import com.example.githubusersdk.common.GitHubResponse
+import com.example.githubusersdk.common.UserError
 import com.example.githubusersdk.models.Users
 
 class GetUser(
@@ -12,7 +13,7 @@ class GetUser(
         page: Int,
         perPage: Int = 30,
         userName: String = "",
-    ): GitHubResponse<Users> {
+    ): GitHubResponse<Users, UserError> {
         return if (userName.isBlank()) {
             repository.getUsers(token, page, perPage)
         } else {
