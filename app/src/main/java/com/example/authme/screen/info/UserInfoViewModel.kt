@@ -6,9 +6,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.authme.API_KEY
+import com.example.authme.common.Resource
 import com.example.authme.navigation.Route
 import com.example.authme.usecase.UserUseCase
-import com.example.githubusersdk.common.GitHubResponse
 import kotlinx.coroutines.launch
 
 class UserInfoViewModel(
@@ -24,10 +24,10 @@ class UserInfoViewModel(
     init {
         viewModelScope.launch {
             when (val response = useCase.getUserInfo(API_KEY, login)) {
-                is GitHubResponse.Error -> {
+                is Resource.Error -> {
                     stateImp.value = InfoState(error = response.error.message)
                 }
-                is GitHubResponse.Success -> {
+                is Resource.Success -> {
                     stateImp.value = InfoState(data = response.data)
                 }
             }

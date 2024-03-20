@@ -2,7 +2,6 @@ package com.example.githubusersdk.lib
 
 import com.example.githubusersdk.BuildConfig
 import com.example.githubusersdk.common.GitHubResponse
-import com.example.githubusersdk.common.UserError
 import com.example.githubusersdk.models.UserInfo
 import com.example.githubusersdk.models.Users
 import com.example.githubusersdk.utils.assertIsA

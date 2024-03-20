@@ -2,9 +2,11 @@ package com.example.authme.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.example.authme.common.ListError.HTTP_ERROR
+import com.example.authme.common.ListError.NETWORK_ERROR
+import com.example.authme.common.ListError.UNKNOWN_ERROR
+import com.example.authme.common.Resource
 import com.example.authme.usecase.GetUser
-import com.example.githubusersdk.common.GitHubResponse
-import com.example.githubusersdk.common.UserError
 import com.example.githubusersdk.models.User
 
 private const val START_INDEX = 0
@@ -24,15 +26,14 @@ class UsersPagingSource(
             params.key ?: if (userName.isNotBlank()) START_INDEX_WITH_NAME else START_INDEX
         return try {
             when (val response = getUser(token, position, params.loadSize, userName)) {
-                is GitHubResponse.Error -> {
+                is Resource.Error -> {
                     when (response.error) {
-                        is UserError.HttpError,
-                        is UserError.NetworkError,
-                        is UserError.NotFoundError,
-                        is UserError.UnknownError -> LoadResult.Error(Exception(response.error.message))
+                        HTTP_ERROR,
+                        NETWORK_ERROR,
+                        UNKNOWN_ERROR -> LoadResult.Error(Exception(response.error.message))
                     }
                 }
-                is GitHubResponse.Success -> {
+                is Resource.Success -> {
                     val items = response.data.data
                     LoadResult.Page(
                         data = items,
