@@ -1,6 +1,7 @@
 package com.example.githubusersdk.lib
 
 import com.example.githubusersdk.common.GitHubResponse
+import com.example.githubusersdk.common.UserError
 import com.example.githubusersdk.models.UserInfo
 import com.example.githubusersdk.models.Users
 import com.example.githubusersdk.utils.toUser
@@ -17,12 +18,17 @@ class GitHubApiManager {
         authorization: String,
         since: Int = 0,
         perPage: Int = 30
-    ): GitHubResponse<Users> {
+    ): GitHubResponse<Users, UserError> {
         return try {
             val token = reformatAuthorization(authorization)
             val response = api.getUsers(token, since, perPage)
             if (!response.isSuccessful) {
-                return GitHubResponse.Error(response.message())
+                return GitHubResponse.Error(
+                    UserError.HttpError(
+                        response.code(),
+                        response.message()
+                    )
+                )
             }
             val nextSince = response.retrieveUsersNextSince()
             val data = response.body()?.mapNotNull {
@@ -37,12 +43,16 @@ class GitHubApiManager {
                 )
             )
         } catch (e: HttpException) {
-            GitHubResponse.Error(e.localizedMessage ?: "A HttpException occurred")
+            GitHubResponse.Error(
+                UserError.HttpError(
+                    e.code(),
+                    e.message ?: "A HttpException occurred"
+                )
+            )
         } catch (e: IOException) {
-            GitHubResponse.Error("Couldn't reach server. Check your internet connect")
+            GitHubResponse.Error(UserError.NetworkError("Couldn't reach server. Check your internet connect"))
         } catch (e: Exception) {
-            println(e)
-            GitHubResponse.Error("Unknown error occurred")
+            GitHubResponse.Error(UserError.UnknownError(e.message ?: "Unknown error occurred"))
         }
     }
 
@@ -51,12 +61,17 @@ class GitHubApiManager {
         name: String,
         page: Int = 1,
         perPage: Int = 30
-    ): GitHubResponse<Users> {
+    ): GitHubResponse<Users, UserError> {
         return try {
             val token = reformatAuthorization(authorization)
             val response = api.getUsersByName(token, name, page, perPage)
             if (!response.isSuccessful) {
-                return GitHubResponse.Error(response.message())
+                return GitHubResponse.Error(
+                    UserError.HttpError(
+                        response.code(),
+                        response.message()
+                    )
+                )
             }
             val nextPage = response.retrieveSearchNextPage()
             val prevPage = response.retrieveSearchPreviousPage()
@@ -73,36 +88,50 @@ class GitHubApiManager {
                 )
             )
         } catch (e: HttpException) {
-            GitHubResponse.Error(e.localizedMessage ?: "A HttpException occurred")
+            GitHubResponse.Error(
+                UserError.HttpError(
+                    e.code(),
+                    e.message ?: "A HttpException occurred"
+                )
+            )
         } catch (e: IOException) {
-            GitHubResponse.Error("Couldn't reach server. Check your internet connect")
+            GitHubResponse.Error(UserError.NetworkError("Couldn't reach server. Check your internet connect"))
         } catch (e: Exception) {
-            println(e)
-            GitHubResponse.Error("Unknown error occurred")
+            GitHubResponse.Error(UserError.UnknownError(e.message ?: "Unknown error occurred"))
         }
     }
 
     suspend fun getUserInfo(
         authorization: String,
         userName: String
-    ): GitHubResponse<UserInfo> {
+    ): GitHubResponse<UserInfo, UserError> {
         return try {
             val token = reformatAuthorization(authorization)
             val response = api.getUserInfo(token, userName)
             if (!response.isSuccessful) {
-                return GitHubResponse.Error(response.message())
+                return GitHubResponse.Error(
+                    UserError.HttpError(
+                        response.code(),
+                        response.message()
+                    )
+                )
             }
             response.body()
                 ?.toUserInfo()
                 ?.let {
                     GitHubResponse.Success(it)
-                } ?: GitHubResponse.Error("User is not found")
+                } ?: GitHubResponse.Error(UserError.NotFoundError("User is not found"))
         } catch (e: HttpException) {
-            GitHubResponse.Error(e.localizedMessage ?: "A HttpException occurred")
+            GitHubResponse.Error(
+                UserError.HttpError(
+                    e.code(),
+                    e.message ?: "A HttpException occurred"
+                )
+            )
         } catch (e: IOException) {
-            GitHubResponse.Error("Couldn't reach server. Check your internet connect")
+            GitHubResponse.Error(UserError.NetworkError("Couldn't reach server. Check your internet connect"))
         } catch (e: Exception) {
-            GitHubResponse.Error("Unknown error occurred")
+            GitHubResponse.Error(UserError.UnknownError(e.message ?: "Unknown error occurred"))
         }
     }
 
