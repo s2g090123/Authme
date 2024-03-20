@@ -136,8 +136,9 @@ class GitHubApiManager {
     }
 
     private fun reformatAuthorization(authorization: String): String {
-        if (authorization.startsWith("Bearer ")) return authorization
-        return "Bearer $authorization"
+        val token = authorization.trim()
+        if (token.startsWith("Bearer ")) return token
+        return "Bearer $token"
     }
 
     private fun Response<*>.retrieveUsersNextSince(): Int? {
