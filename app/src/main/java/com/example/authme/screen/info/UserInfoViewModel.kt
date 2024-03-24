@@ -1,7 +1,5 @@
 package com.example.authme.screen.info
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,17 +16,20 @@ class UserInfoViewModel(
     private val login: String =
         savedStateHandle[Route.Info.params] ?: throw Exception("login is null")
 
-    private val stateImp = mutableStateOf(InfoState(loading = true))
-    val state: State<InfoState> = stateImp
+    private val stateImp = MutableInfoState()
+    val state: InfoState = stateImp
 
     init {
         viewModelScope.launch {
+            stateImp.loading = true
             when (val response = useCase.getUserInfo(API_KEY, login)) {
                 is Resource.Error -> {
-                    stateImp.value = InfoState(error = response.error.message)
+                    stateImp.error = response.error.message
+                    stateImp.loading = false
                 }
                 is Resource.Success -> {
-                    stateImp.value = InfoState(data = response.data)
+                    stateImp.data = response.data
+                    stateImp.loading = false
                 }
             }
         }

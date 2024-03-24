@@ -49,7 +49,7 @@ fun UserInfoScreen(
     viewModel: UserInfoViewModel = koinViewModel(),
     onBack: () -> Unit,
 ) {
-    val state = viewModel.state.value
+    val state = viewModel.state
     Scaffold(
         topBar = {
             IconButton(
@@ -81,7 +81,9 @@ fun UserInfoScreen(
                     )
                 }
                 else -> {
-                    InfoBody(info = state.data)
+                    state.data?.let {
+                        InfoBody(info = it)
+                    }
                 }
             }
         }
