@@ -2,6 +2,7 @@ package com.example.authme.screen.info
 
 import androidx.lifecycle.SavedStateHandle
 import com.example.authme.BaseUnitTest
+import com.example.authme.common.InfoError
 import com.example.authme.data.UserInfoGenerator
 import com.example.authme.navigation.Route
 import com.example.authme.rule.MainDispatcherRule
@@ -22,8 +23,10 @@ class UserInfoViewModelTest : BaseUnitTest() {
             useCase = get(UserUseCase::class.java)
         )
 
-        val actual = viewModel.state.value
-        val expected = InfoState(data = UserInfoGenerator.create().first { it.login == "1" })
+        val actual = viewModel.state
+        val expected = MutableInfoState().apply {
+            data = UserInfoGenerator.create().first { it.login == "1" }
+        }
         assertEquals(
             expected = expected,
             actual = actual
@@ -37,8 +40,10 @@ class UserInfoViewModelTest : BaseUnitTest() {
             useCase = get(UserUseCase::class.java)
         )
 
-        val actual = viewModel.state.value
-        val expected = InfoState(error = "Not Found")
+        val actual = viewModel.state
+        val expected = MutableInfoState().apply {
+            error = InfoError.NOT_FOUND_ERROR.message
+        }
         assertEquals(
             expected = expected,
             actual = actual

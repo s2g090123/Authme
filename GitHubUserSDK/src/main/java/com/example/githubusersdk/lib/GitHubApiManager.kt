@@ -12,13 +12,13 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 
-class GitHubApiManager {
+class GitHubApiManager : ApiManager {
     private val api by lazy { RetrofitBuilder.buildGitHubService() }
 
-    suspend fun getUsers(
+    override suspend fun getUsers(
         authorization: String,
-        since: Int = 0,
-        perPage: Int = 30
+        since: Int,
+        perPage: Int
     ): GitHubResponse<Users, UserListError> {
         return try {
             val token = reformatAuthorization(authorization)
@@ -57,11 +57,11 @@ class GitHubApiManager {
         }
     }
 
-    suspend fun getUsersByName(
+    override suspend fun getUsersByName(
         authorization: String,
         name: String,
-        page: Int = 1,
-        perPage: Int = 30
+        page: Int,
+        perPage: Int
     ): GitHubResponse<Users, UserListError> {
         return try {
             val token = reformatAuthorization(authorization)
@@ -102,7 +102,7 @@ class GitHubApiManager {
         }
     }
 
-    suspend fun getUserInfo(
+    override suspend fun getUserInfo(
         authorization: String,
         userName: String
     ): GitHubResponse<UserInfo, UserInfoError> {

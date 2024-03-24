@@ -3,12 +3,12 @@ package com.example.authme.repository
 import com.example.githubusersdk.common.GitHubResponse
 import com.example.githubusersdk.common.UserInfoError
 import com.example.githubusersdk.common.UserListError
-import com.example.githubusersdk.lib.GitHubApiManager
+import com.example.githubusersdk.lib.ApiManager
 import com.example.githubusersdk.models.UserInfo
 import com.example.githubusersdk.models.Users
 
 class DefaultUserRepository(
-    private val manager: GitHubApiManager,
+    private val manager: ApiManager,
 ) : UserRepository {
     override suspend fun getUsers(
         token: String,
