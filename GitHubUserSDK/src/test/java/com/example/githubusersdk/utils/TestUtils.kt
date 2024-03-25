@@ -4,9 +4,9 @@ import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert
 import org.hamcrest.core.Is
 
-inline fun <reified V> assertIsA(item: Any): V {
-    MatcherAssert.assertThat(item, CoreMatchers.instanceOf(V::class.java))
-    return item as V
+inline fun <reified T> Any.assertIsA(): T {
+    MatcherAssert.assertThat(this, CoreMatchers.instanceOf(T::class.java))
+    return this as T
 }
 
 inline fun <T> T.assertIsTrue(runnable: (T) -> Boolean) = apply {

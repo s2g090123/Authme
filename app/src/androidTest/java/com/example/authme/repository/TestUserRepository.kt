@@ -3,6 +3,8 @@ package com.example.authme.repository
 import com.example.authme.data.UserGenerator
 import com.example.authme.data.UserInfoGenerator
 import com.example.githubusersdk.common.GitHubResponse
+import com.example.githubusersdk.common.UserInfoError
+import com.example.githubusersdk.common.UserListError
 import com.example.githubusersdk.models.UserInfo
 import com.example.githubusersdk.models.Users
 
@@ -16,7 +18,11 @@ class TestUserRepository : UserRepository {
 
     private val userInfo = UserInfoGenerator.create()
 
-    override suspend fun getUsers(token: String, since: Int, perPage: Int): GitHubResponse<Users> {
+    override suspend fun getUsers(
+        token: String,
+        since: Int,
+        perPage: Int
+    ): GitHubResponse<Users, UserListError> {
         return GitHubResponse.Success(users)
     }
 
@@ -25,7 +31,7 @@ class TestUserRepository : UserRepository {
         name: String,
         page: Int,
         perPage: Int
-    ): GitHubResponse<Users> {
+    ): GitHubResponse<Users, UserListError> {
         return GitHubResponse.Success(
             users.copy(
                 data = UserGenerator.create().filter {
@@ -35,10 +41,13 @@ class TestUserRepository : UserRepository {
         )
     }
 
-    override suspend fun getUserInfo(token: String, userName: String): GitHubResponse<UserInfo> {
+    override suspend fun getUserInfo(
+        token: String,
+        userName: String
+    ): GitHubResponse<UserInfo, UserInfoError> {
         return userInfo
             .firstOrNull { it.login == userName }
             ?.let { GitHubResponse.Success(it) }
-            ?: GitHubResponse.Error("Not Found")
+            ?: GitHubResponse.Error(UserInfoError.NotFoundError("Not Found"))
     }
 }

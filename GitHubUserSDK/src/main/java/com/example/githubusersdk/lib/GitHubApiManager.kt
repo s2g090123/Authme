@@ -1,6 +1,8 @@
 package com.example.githubusersdk.lib
 
 import com.example.githubusersdk.common.GitHubResponse
+import com.example.githubusersdk.common.UserInfoError
+import com.example.githubusersdk.common.UserListError
 import com.example.githubusersdk.models.UserInfo
 import com.example.githubusersdk.models.Users
 import com.example.githubusersdk.utils.toUser
@@ -10,19 +12,24 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 
-class GitHubApiManager {
+class GitHubApiManager : ApiManager {
     private val api by lazy { RetrofitBuilder.buildGitHubService() }
 
-    suspend fun getUsers(
+    override suspend fun getUsers(
         authorization: String,
-        since: Int = 0,
-        perPage: Int = 30
-    ): GitHubResponse<Users> {
+        since: Int,
+        perPage: Int
+    ): GitHubResponse<Users, UserListError> {
         return try {
             val token = reformatAuthorization(authorization)
             val response = api.getUsers(token, since, perPage)
             if (!response.isSuccessful) {
-                return GitHubResponse.Error(response.message())
+                return GitHubResponse.Error(
+                    UserListError.HttpError(
+                        response.code(),
+                        response.message()
+                    )
+                )
             }
             val nextSince = response.retrieveUsersNextSince()
             val data = response.body()?.mapNotNull {
@@ -37,26 +44,35 @@ class GitHubApiManager {
                 )
             )
         } catch (e: HttpException) {
-            GitHubResponse.Error(e.localizedMessage ?: "A HttpException occurred")
+            GitHubResponse.Error(
+                UserListError.HttpError(
+                    e.code(),
+                    e.message ?: "A HttpException occurred"
+                )
+            )
         } catch (e: IOException) {
-            GitHubResponse.Error("Couldn't reach server. Check your internet connect")
+            GitHubResponse.Error(UserListError.NetworkError("Couldn't reach server. Check your internet connect"))
         } catch (e: Exception) {
-            println(e)
-            GitHubResponse.Error("Unknown error occurred")
+            GitHubResponse.Error(UserListError.UnknownError(e.message ?: "Unknown error occurred"))
         }
     }
 
-    suspend fun getUsersByName(
+    override suspend fun getUsersByName(
         authorization: String,
         name: String,
-        page: Int = 1,
-        perPage: Int = 30
-    ): GitHubResponse<Users> {
+        page: Int,
+        perPage: Int
+    ): GitHubResponse<Users, UserListError> {
         return try {
             val token = reformatAuthorization(authorization)
             val response = api.getUsersByName(token, name, page, perPage)
             if (!response.isSuccessful) {
-                return GitHubResponse.Error(response.message())
+                return GitHubResponse.Error(
+                    UserListError.HttpError(
+                        response.code(),
+                        response.message()
+                    )
+                )
             }
             val nextPage = response.retrieveSearchNextPage()
             val prevPage = response.retrieveSearchPreviousPage()
@@ -73,42 +89,57 @@ class GitHubApiManager {
                 )
             )
         } catch (e: HttpException) {
-            GitHubResponse.Error(e.localizedMessage ?: "A HttpException occurred")
+            GitHubResponse.Error(
+                UserListError.HttpError(
+                    e.code(),
+                    e.message ?: "A HttpException occurred"
+                )
+            )
         } catch (e: IOException) {
-            GitHubResponse.Error("Couldn't reach server. Check your internet connect")
+            GitHubResponse.Error(UserListError.NetworkError("Couldn't reach server. Check your internet connect"))
         } catch (e: Exception) {
-            println(e)
-            GitHubResponse.Error("Unknown error occurred")
+            GitHubResponse.Error(UserListError.UnknownError(e.message ?: "Unknown error occurred"))
         }
     }
 
-    suspend fun getUserInfo(
+    override suspend fun getUserInfo(
         authorization: String,
         userName: String
-    ): GitHubResponse<UserInfo> {
+    ): GitHubResponse<UserInfo, UserInfoError> {
         return try {
             val token = reformatAuthorization(authorization)
             val response = api.getUserInfo(token, userName)
             if (!response.isSuccessful) {
-                return GitHubResponse.Error(response.message())
+                return GitHubResponse.Error(
+                    UserInfoError.HttpError(
+                        response.code(),
+                        response.message()
+                    )
+                )
             }
             response.body()
                 ?.toUserInfo()
                 ?.let {
                     GitHubResponse.Success(it)
-                } ?: GitHubResponse.Error("User is not found")
+                } ?: GitHubResponse.Error(UserInfoError.NotFoundError("User is not found"))
         } catch (e: HttpException) {
-            GitHubResponse.Error(e.localizedMessage ?: "A HttpException occurred")
+            GitHubResponse.Error(
+                UserInfoError.HttpError(
+                    e.code(),
+                    e.message ?: "A HttpException occurred"
+                )
+            )
         } catch (e: IOException) {
-            GitHubResponse.Error("Couldn't reach server. Check your internet connect")
+            GitHubResponse.Error(UserInfoError.NetworkError("Couldn't reach server. Check your internet connect"))
         } catch (e: Exception) {
-            GitHubResponse.Error("Unknown error occurred")
+            GitHubResponse.Error(UserInfoError.UnknownError(e.message ?: "Unknown error occurred"))
         }
     }
 
     private fun reformatAuthorization(authorization: String): String {
-        if (authorization.startsWith("Bearer ")) return authorization
-        return "Bearer $authorization"
+        val token = authorization.trim()
+        if (token.startsWith("Bearer ")) return token
+        return "Bearer $token"
     }
 
     private fun Response<*>.retrieveUsersNextSince(): Int? {

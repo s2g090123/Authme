@@ -1,4 +1,4 @@
-package com.example.authme.repository
+package com.example.githubusersdk.lib
 
 import com.example.githubusersdk.common.GitHubResponse
 import com.example.githubusersdk.common.UserInfoError
@@ -6,22 +6,22 @@ import com.example.githubusersdk.common.UserListError
 import com.example.githubusersdk.models.UserInfo
 import com.example.githubusersdk.models.Users
 
-interface UserRepository {
+interface ApiManager {
     suspend fun getUsers(
-        token: String,
-        since: Int,
-        perPage: Int
+        authorization: String,
+        since: Int = 0,
+        perPage: Int = 30
     ): GitHubResponse<Users, UserListError>
 
     suspend fun getUsersByName(
-        token: String,
+        authorization: String,
         name: String,
-        page: Int,
-        perPage: Int
+        page: Int = 1,
+        perPage: Int = 30
     ): GitHubResponse<Users, UserListError>
 
     suspend fun getUserInfo(
-        token: String,
+        authorization: String,
         userName: String
     ): GitHubResponse<UserInfo, UserInfoError>
 }
